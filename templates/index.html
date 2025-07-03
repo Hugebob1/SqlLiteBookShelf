@@ -6,6 +6,12 @@
 </head>
 <body>
 <h1>My Library</h1>
+    <form action="{{ url_for('home') }}" method="POST">
+        <button name="Sort" value="bytitle">Sort by title</button>
+        <button name="Sort" value="byscoreAsc">Sort by score Ascending</button>
+        <button name="Sort" value="byscoreDesc">Sort by score Descending</button>
+
+    </form>
         {% if not books %}
         <p>Library is empty.</p>
         {% endif %}
