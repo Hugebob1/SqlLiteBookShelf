@@ -28,11 +28,24 @@ class Book(db.Model):
 with app.app_context():
   db.create_all()
 
-all_books = []
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template("index.html", books=db.session.query(Book).all())
+    books = db.session.query(Book).all()
+
+    if request.method == 'POST':
+        tmp = request.form.get("Sort")
+        print(tmp)
+        if tmp=="bytitle":
+            books = db.session.query(Book).order_by(Book.title).all()
+        if tmp=="byscoreAsc":
+            books = db.session.query(Book).order_by(Book.rating).all()
+        if tmp=="byscoreDesc":
+            books = db.session.query(Book).order_by(Book.rating.desc()).all()
+
+    db.session.query(Book.rating).all()
+    return render_template("index.html", books=books)
 
 
 @app.route("/add", methods=["GET", "POST"])
@@ -44,13 +57,6 @@ def add():
             author=request.form["author"],
             rating=request.form["rating"]
         )
-
-        tmp = {
-            "title": request.form["title"],
-            "author": request.form["author"],
-            "rating": request.form["rating"]
-        }
-        all_books.append(tmp)
 
         db.session.add(new_book)
         db.session.commit()
